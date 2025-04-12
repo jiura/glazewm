@@ -193,6 +193,9 @@ pub extern "system" fn event_window_proc(
           // System is entering sleep/hibernation.
           PBT_APMSUSPEND => {
             IS_SYSTEM_SUSPENDED.store(true, Ordering::Relaxed);
+            if let Err(err) = event_tx.send(PlatformEvent::SystemSleep) {
+              warn!("Failed to send SystemSleep event: {}", err)
+            }
           }
           _ => {}
         }
